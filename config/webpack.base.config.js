@@ -30,6 +30,10 @@ const baseConfig = {
         test:    /\.vue$/,
         loader:  'vue-loader',
         options: {
+          cssModules: {
+            localIdentName: '[local]-[hash:base64:5]',
+            camelCase: true
+          },
           loaders: {
             'scss': 'vue-style-loader!css-loader!sass-loader',
             'sass': 'vue-style-loader!css-loader!sass-loader?indentedSyntax',
