@@ -22,6 +22,7 @@ const baseConfig = {
                                PRODUCTION:             isProd,
                                DEVELOPMENT:            !isProd,
                                'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+                               TEST:                   false,
                              }),
   ],
   module:  {

@@ -23,19 +23,19 @@
           </router-link>
         </li>
         <li>
-          <a @click="langSwitch('en')">
+          <a @click="localeSwitch('en')">
             <i class="fas fa-flag" />
             <small>{{ $t('App.nav.english' /*English*/) }}</small>
           </a>
         </li>
         <li>
-          <a @click="langSwitch('de')">
+          <a @click="localeSwitch('de')">
             <i class="fas fa-flag" />
             <small>{{ $t('App.nav.german' /*German*/) }}</small>
           </a>
         </li>
         <li>
-          <a @click="langSwitch('pt')">
+          <a @click="localeSwitch('pt')">
             <i class="fas fa-flag" />
             <small>{{ $t('App.nav.pt-BR' /*Portuguese*/) }}</small>
           </a>
@@ -52,13 +52,13 @@
 </template>
 
 <script lang="ts">
-  import { mapActions }        from 'vuex';
-  import VueNavBar             from './shared/components/VueNavBar/VueNavBar.vue';
-  import VueGrid               from './shared/components/VueGrid/VueGrid.vue';
-  import VueGridItem           from './shared/components/VueGridItem/VueGridItem.vue';
-  import VueFooter             from './shared/components/VueFooter/VueFooter.vue';
-  import VueNotificationStack  from './shared/components/VueNotificationStack/VueNotificationStack.vue';
-  import { loadLanguageAsync } from './shared/plugins/i18n/i18n';
+  import { mapActions }       from 'vuex';
+  import VueNavBar            from './shared/components/VueNavBar/VueNavBar.vue';
+  import VueGrid              from './shared/components/VueGrid/VueGrid.vue';
+  import VueGridItem          from './shared/components/VueGridItem/VueGridItem.vue';
+  import VueFooter            from './shared/components/VueFooter/VueFooter.vue';
+  import VueNotificationStack from './shared/components/VueNotificationStack/VueNotificationStack.vue';
+  import { loadLocaleAsync }  from './shared/plugins/i18n/i18n';
 
   export default {
     components: {
@@ -69,12 +69,12 @@
       VueNotificationStack,
     },
     methods:    {
-      ...mapActions(['changeLang']),
-      langSwitch(lang: string): void {
-        loadLanguageAsync(lang)
+      ...mapActions(['changeLocale']),
+      localeSwitch(lang: string): void {
+        loadLocaleAsync(lang)
         .catch((error: Error) => console.log(error));
 
-        this.changeLang(lang);
+        this.changeLocale(lang);
       },
     },
   };

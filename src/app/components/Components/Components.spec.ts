@@ -1,6 +1,6 @@
 import { mount, createLocalVue } from '@vue/test-utils';
 import Vuex                      from 'vuex';
-import { getI18n }               from '../../shared/plugins/i18n/i18n';
+import { i18n }               from '../../shared/plugins/i18n/i18n';
 import Components                from './Components.vue';
 import $style                    from 'identity-obj-proxy';
 import { IFormElement }          from '../../shared/components/VueForm/IFormSchema';
@@ -14,7 +14,7 @@ describe('Components.vue', () => {
   test('renders component', () => {
     const wrapper = mount(Components, {
       localVue,
-      i18n:  getI18n(),
+      i18n,
       mocks: {
         $style,
       },

@@ -2,7 +2,7 @@ import { mount, createLocalVue } from '@vue/test-utils';
 import Vuex                      from 'vuex';
 import Home                      from './Home.vue';
 import $style                    from 'identity-obj-proxy';
-import { getI18n }               from '../../shared/plugins/i18n/i18n';
+import { i18n }               from '../../shared/plugins/i18n/i18n';
 
 const localVue = createLocalVue();
 
@@ -18,7 +18,7 @@ describe('Home.vue', () => {
     const wrapper = mount(Home, {
       store,
       localVue,
-      i18n:  getI18n(),
+      i18n,
       mocks: { $style },
     });
 
