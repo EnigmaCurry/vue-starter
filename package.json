@@ -48,6 +48,7 @@
     "dev:dev-server": "webpack -d --config ./config/webpack.dev-server.config.js --progress --hide-modules",
     "dev:server": "webpack -d --config ./config/webpack.server.config.js --progress --hide-modules",
     "predev": "npm run clean && npm run build-storybook",
+    "build:spa": "rimraf ./dist && cross-env NODE_ENV=production webpack --config ./config/webpack.spa.config.js",
     "build:client": "cross-env NODE_ENV=production webpack --config ./config/webpack.client.config.js",
     "build:isomorphic": "cross-env NODE_ENV=production webpack --config ./config/webpack.isomorphic.config.js",
     "build:server": "cross-env NODE_ENV=production webpack --config ./config/webpack.server.config.js",
