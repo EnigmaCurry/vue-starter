@@ -4,16 +4,14 @@ import * as glob from 'glob';
 import * as fs   from 'fs';
 import * as path from 'path';
 
-const basePath: string = path.resolve(process.cwd());
-const packageJSON: any = JSON.parse(fs.readFileSync(path.join(basePath, 'package.json')).toString());
-const supportedLanguages: string[] = packageJSON.config['supported-locales'];
-const defaultLanguage: string = packageJSON.config['default-locale'];
-const translations: any = {};
-const sanitizeMessage = (message: string): string => {
+export const getTranslationsFromString = (content: string): RegExpMatchArray => {
+  return content.match(/\$t\([\r,\n, ,\S]*?\)/g);
+};
+export const sanitizeMessage = (message: string): string => {
   const replacements: Array<{ from: string | RegExp, to: string }> = [
     { from: '/*', to: '' },
     { from: '*/', to: '' },
-    { from: /\n/g, to: '\\n' },
+    { from: /\\n/g, to: '\\n' },
     { from: /\[/g, to: '<' },
     { from: /\]/g, to: '>' },
     { from: /"/g, to: '\'' },
@@ -26,33 +24,42 @@ const sanitizeMessage = (message: string): string => {
 
   return message.trim();
 };
+export const getTranslationObject = (matches: string[]): any => {
+  const translations: any = {};
 
-const addTranslationObject = (translation: string) => {
-  const idMatches: string[] = translation.match(/'\S*'/);
-  const id: string = idMatches ? idMatches[0].replace(/[\\']/g, '') : '';
-  const defaultMessageMatches: string[] = translation.match(/\/\*[\S\s]*\*\//);
-  const defaultMessage: string = defaultMessageMatches
-    ? defaultMessageMatches[0]
-    : '';
+  matches.forEach((translation: string) => {
+    const idMatches: string[] = translation.match(/'\S*'/);
+    const id: string = idMatches ? idMatches[0].replace(/[\\']/g, '') : '';
+    const defaultMessageMatches: string[] = translation.match(/\/\*[\S\s]*\*\//);
+    const defaultMessage: string = defaultMessageMatches
+                                   ? defaultMessageMatches[0]
+                                   : '';
 
-  if (defaultMessage.length > 0) {
-    translations[id] = defaultMessage;
-  }
+    if (defaultMessage.length > 0) {
+      translations[id] = defaultMessage;
+    }
+  });
+
+  return translations;
 };
 
 const run = (): void => {
   glob('./src/app/**/*.vue', (err: any, files: string[]) => {
+    const basePath: string = path.resolve(process.cwd());
+    const packageJSON: any = JSON.parse(fs.readFileSync(path.join(basePath, 'package.json')).toString());
+    const supportedLanguages: string[] = packageJSON.config['supported-locales'];
+    const defaultLanguage: string = packageJSON.config['default-locale'];
+    let translations: any = {};
+
     /**
      * go through all *.vue files end extract the translation object $t('foo') -> {id: 'foo'}
      */
     files.forEach((file: string) => {
       const content = fs.readFileSync(file).toString();
-      const matches: string[] = content.match(/\$t\([\r,\n, ,\S]*?\)/g);
+      const matches: string[] = getTranslationsFromString(content);
 
       if (matches) {
-        matches.forEach((translation: string) => {
-          addTranslationObject(translation);
-        });
+        translations = getTranslationObject(matches);
       }
     });
 
@@ -64,8 +71,8 @@ const run = (): void => {
       const langFile: string = fs.existsSync(langFilePath) ? fs.readFileSync(langFilePath).toString() : null;
       const langFileObject: any = langFile ? JSON.parse(langFile) : {};
       const newLangObject: any = lang === defaultLanguage
-        ? (Object as any).assign({}, langFileObject, translations)
-        : (Object as any).assign({}, translations, langFileObject);
+                                 ? (Object as any).assign({}, langFileObject, translations)
+                                 : (Object as any).assign({}, translations, langFileObject);
 
       /**
        * sort entries
