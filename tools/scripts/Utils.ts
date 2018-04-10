@@ -1,15 +1,17 @@
 export const getTranslationsFromString = (content: string): RegExpMatchArray => {
-  return content.match(/\$t\([\r,\n, ,\S]*?\)/g);
+  return [
+    ...content.match(/\$t\('.*'\)/g),
+    ...content.match(/\$t\('.*'\s*\/\*[\r,\n, ,\S]*?\*\/\)/g),
+  ];
 };
 export const sanitizeMessage = (message: string): string => {
   const replacements: Array<{ from: string | RegExp, to: string }> = [
+    { from: /\s\s+/g, to: ' ' },
     { from: '/*', to: '' },
     { from: '*/', to: '' },
-    { from: /\\n/g, to: '\\n' },
     { from: /\[/g, to: '<' },
     { from: /\]/g, to: '>' },
-    { from: /"/g, to: '\'' },
-    { from: /\s\s+/g, to: ' ' },
+    { from: /"/g, to: '\\"' },
   ];
 
   replacements.forEach((replacement: { from: string | RegExp, to: string }) => {

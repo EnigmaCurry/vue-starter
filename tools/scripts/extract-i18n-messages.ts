@@ -1,9 +1,9 @@
 /* tslint:disable:no-console */
 
-import * as glob                                                            from 'glob';
-import * as fs                                                              from 'fs';
-import * as path                                                            from 'path';
-import { getTranslationObject, getTranslationsFromString, sanitizeMessage } from './Utils';
+import * as glob                                           from 'glob';
+import * as fs                                             from 'fs';
+import * as path                                           from 'path';
+import { getTranslationObject, getTranslationsFromString } from './Utils';
 
 const run = (): void => {
   glob('./src/app/**/*.vue', (err: any, files: string[]) => {
@@ -21,7 +21,7 @@ const run = (): void => {
       const matches: string[] = getTranslationsFromString(content);
 
       if (matches) {
-        translations = getTranslationObject(matches);
+        translations = {...translations, ...getTranslationObject(matches)};
       }
     });
 
@@ -41,7 +41,7 @@ const run = (): void => {
        */
       const sortedKeys: string[] = (Object as any).keys(newI18nObject).sort();
       const sortedEntries: string[] = sortedKeys.map((key: string) => {
-        return `"${key}": "${sanitizeMessage(newI18nObject[key])}"`;
+        return `"${key}": "${newI18nObject[key].replace(/\n/g, '\\n')}"`;
       });
 
       fs.writeFileSync(path.join(basePath, 'i18n', `${locale}.json`), `{\n  ${sortedEntries.join(',\n  ')}\n}\n`);
